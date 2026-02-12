@@ -1,9 +1,24 @@
 import { socket } from "../socket";
 
 // CREATE
-export const createTask = (task) => {
-    socket.emit("task:create", task);
-};
+export const createTask = () => {
+        const task = {
+            id: Date.now().toString(),
+            ...newTask,
+        };
+
+        socket.emit("task:create", task);
+
+        // reset modal
+        setNewTask({
+            title: "",
+            description: "",
+            priority: "Low",
+            category: "Feature",
+            status: "todo"
+        });
+        setShowModal(false);
+    };
 
 // UPDATE
 export const updateTask = (task) => {
