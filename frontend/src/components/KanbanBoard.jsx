@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {socket} from '../socket';
+import {
+    createTask,
+    updateTask,
+    moveTask,
+    deleteTask
+} from "../services/taskService";
 
 function KanbanBoard() {
     // TODO: Implement state and WebSocket logic
@@ -50,24 +56,7 @@ function KanbanBoard() {
         };
     }, []);
 
-    const createTask = () => {
-        const task = {
-            id: Date.now().toString(),
-            ...newTask,
-        };
-
-        socket.emit("task:create", task);
-
-        // reset modal
-        setNewTask({
-            title: "",
-            description: "",
-            priority: "Low",
-            category: "Feature",
-            status: "todo"
-        });
-        setShowModal(false);
-    };
+    
 
     const getTasksByStatus = (status) =>
         tasks.filter((t) => t.status === status);
