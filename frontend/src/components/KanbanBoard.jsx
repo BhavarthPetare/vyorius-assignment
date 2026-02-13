@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {socket} from '../socket';
+import React, { useEffect, useState } from "react";
+import { socket } from "../socket";
 import {
     createTask,
     updateTask,
@@ -8,19 +8,21 @@ import {
 } from "../services/taskService";
 
 function KanbanBoard() {
-    // TODO: Implement state and WebSocket logic
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [showModal, setShowModal] = useState(false);
-    const [newTask, setNewTask] = useState({
+    const [formData, setFormData] = useState({
         title: "",
         description: "",
         priority: "Low",
         category: "Feature",
-        status: "todo",
+        status: "todo"
     });
 
+    // ---------------------------
+    // SOCKET LISTENERS
+    // ---------------------------
     useEffect(() => {
         socket.on("sync:tasks", (serverTasks) => {
             setTasks(serverTasks);
@@ -39,12 +41,16 @@ function KanbanBoard() {
 
         socket.on("task:moved", ({ id, status }) => {
             setTasks((prev) =>
-                prev.map((t) => (t.id === id ? { ...t, status } : t))
+                prev.map((t) =>
+                    t.id === id ? { ...t, status } : t
+                )
             );
         });
 
         socket.on("task:deleted", (id) => {
-            setTasks((prev) => prev.filter((t) => t.id !== id));
+            setTasks((prev) =>
+                prev.filter((t) => t.id !== id)
+            );
         });
 
         return () => {
@@ -56,7 +62,34 @@ function KanbanBoard() {
         };
     }, []);
 
-    
+    // ---------------------------
+    // HANDLERS
+    // ---------------------------
+    const handleCreate = () => {
+        createTask(formData);
+
+        setFormData({
+            title: "",
+            description: "",
+            priority: "Low",
+            category: "Feature",
+            status: "todo"
+        });
+
+        setShowModal(false);
+    };
+
+    const handleDelete = (id) => {
+        deleteTask(id);
+    };
+
+    const handleMove = (id, newStatus) => {
+        moveTask(id, newStatus);
+    };
+
+    const handleUpdate = (task) => {
+        updateTask(task);
+    };
 
     const getTasksByStatus = (status) =>
         tasks.filter((t) => t.status === status);
@@ -64,103 +97,86 @@ function KanbanBoard() {
     if (loading) return <p>Loading board...</p>;
 
     return (
-        <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
-            <Column title="To Do" tasks={getTasksByStatus("todo")} />
-            <Column title="In Progress" tasks={getTasksByStatus("inprogress")} />
-            <Column title="Done" tasks={getTasksByStatus("done")} />
-        </div>
-    );
-}
-
-function Column({ title, tasks }) {
-    return (
         <div style={{ padding: "20px" }}>
-            
-            <button
-                onClick={() => setShowModal(true)}
-                style={{ marginBottom: "20px", padding: "10px 16px" }}
-            >
+
+            <button onClick={() => setShowModal(true)}>
                 + Create Task
             </button>
 
             {showModal && (
-                <div style={{
-                    position: "fixed",
-                    top: 0, left: 0,
-                    width: "100vw", height: "100vh",
-                    background: "rgba(0,0,0,0.3)",
-                    display: "flex", justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                    <div style={{
-                        background: "#fff",
-                        padding: "20px",
-                        width: "350px",
-                        borderRadius: "8px"
-                    }}>
-                        <h3>Create New Task</h3>
-
-                        <input
-                            type="text"
-                            placeholder="Title"
-                            value={newTask.title}
-                            onChange={(e) =>
-                                setNewTask({ ...newTask, title: e.target.value })
-                            }
-                            style={{ width: "100%", marginBottom: "10px" }}
-                        />
-
-                        <textarea
-                            placeholder="Description"
-                            value={newTask.description}
-                            onChange={(e) =>
-                                setNewTask({ ...newTask, description: e.target.value })
-                            }
-                            style={{ width: "100%", marginBottom: "10px" }}
-                        />
-
-                        <label>Priority:</label>
-                        <select
-                            value={newTask.priority}
-                            onChange={(e) =>
-                                setNewTask({ ...newTask, priority: e.target.value })
-                            }
-                            style={{ width: "100%", marginBottom: "10px" }}
-                        >
-                            <option>Low</option>
-                            <option>Medium</option>
-                            <option>High</option>
-                        </select>
-
-                        <label>Category:</label>
-                        <select
-                            value={newTask.category}
-                            onChange={(e) =>
-                                setNewTask({ ...newTask, category: e.target.value })
-                            }
-                            style={{ width: "100%", marginBottom: "10px" }}
-                        >
-                            <option>Feature</option>
-                            <option>Bug</option>
-                            <option>Enhancement</option>
-                        </select>
-
-                        <button onClick={createTask}>Create</button>
-                        <button onClick={() => setShowModal(false)} style={{ marginLeft: "10px" }}>
-                            Cancel
-                        </button>
-                    </div>
+                <div style={{ marginTop: "20px" }}>
+                    <input
+                        placeholder="Title"
+                        value={formData.title}
+                        onChange={(e) =>
+                            setFormData({ ...formData, title: e.target.value })
+                        }
+                    />
+                    <button onClick={handleCreate}>
+                        Save
+                    </button>
                 </div>
             )}
-            <div style={{ border: "1px solid #ccc", padding: "10px", width: "250px" }}>
-                <h3>{title}</h3>
-                {tasks.length === 0 ? <p>No tasks</p> : null}
-                {tasks.map((t) => (
-                    <div key={t.id} style={{ padding: "8px", border: "1px solid #aaa", marginBottom: "10px" }}>
-                        <strong>{t.title}</strong>
-                    </div>
-                ))}
+
+            <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
+                <Column
+                    title="To Do"
+                    tasks={getTasksByStatus("todo")}
+                    onDelete={handleDelete}
+                    onMove={handleMove}
+                    onUpdate={handleUpdate}
+                />
+                <Column
+                    title="In Progress"
+                    tasks={getTasksByStatus("inprogress")}
+                    onDelete={handleDelete}
+                    onMove={handleMove}
+                    onUpdate={handleUpdate}
+                />
+                <Column
+                    title="Done"
+                    tasks={getTasksByStatus("done")}
+                    onDelete={handleDelete}
+                    onMove={handleMove}
+                    onUpdate={handleUpdate}
+                />
             </div>
+        </div>
+    );
+}
+
+
+// ---------------------------
+// TEMP COLUMN COMPONENT
+// ---------------------------
+function Column({ title, tasks, onDelete }) {
+    return (
+        <div style={{
+            border: "1px solid #ccc",
+            padding: "10px",
+            width: "250px"
+        }}>
+            <h3>{title}</h3>
+
+            {tasks.map((task) => (
+                <div
+                    key={task.id}
+                    style={{
+                        border: "1px solid #999",
+                        padding: "8px",
+                        marginBottom: "8px"
+                    }}
+                >
+                    <strong>{task.title}</strong>
+                    <br />
+                    <button
+                        onClick={() => onDelete(task.id)}
+                        style={{ marginTop: "5px" }}
+                    >
+                        Delete
+                    </button>
+                </div>
+            ))}
         </div>
     );
 }
