@@ -1,36 +1,57 @@
 import { socket } from "../socket";
 
-// CREATE
-export const createTask = () => {
-        const task = {
-            id: Date.now().toString(),
-            ...newTask,
-        };
-
-        socket.emit("task:create", task);
-
-        // reset modal
-        setNewTask({
-            title: "",
-            description: "",
-            priority: "Low",
-            category: "Feature",
-            status: "todo"
-        });
-        setShowModal(false);
+/**
+ * CREATE TASK
+ */
+export const createTask = (taskData) => {
+    const task = {
+        id: Date.now().toString(),
+        ...taskData,
     };
 
-// UPDATE
-export const updateTask = (task) => {
-    socket.emit("task:update", task);
+    socket.emit("task:create", task);
 };
 
-// MOVE
-export const moveTask = (id, status) => {
-    socket.emit("task:move", { id, status });
+
+/**
+ * UPDATE TASK
+ * Accepts full updated task object
+ */
+export const updateTask = (updatedTask) => {
+    if (!updatedTask?.id) {
+        console.error("updateTask: Task ID missing");
+        return;
+    }
+
+    socket.emit("task:update", updatedTask);
 };
 
-// DELETE
-export const deleteTask = (id) => {
-    socket.emit("task:delete", id);
+
+/**
+ * MOVE TASK
+ * Only sends minimal payload needed
+ */
+export const moveTask = (taskId, newStatus) => {
+    if (!taskId || !newStatus) {
+        console.error("moveTask: Invalid parameters");
+        return;
+    }
+
+    socket.emit("task:move", {
+        id: taskId,
+        status: newStatus,
+    });
+};
+
+
+/**
+ * DELETE TASK
+ */
+export const deleteTask = (taskId) => {
+    if (!taskId) {
+        console.error("deleteTask: Task ID missing");
+        return;
+    }
+
+    socket.emit("task:delete", taskId);
 };
