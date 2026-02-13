@@ -5,7 +5,7 @@ const ItemTypes = {
     TASK: "task",
 };
 
-function Column({ title, status, tasks, onDelete, onMove }) {
+function Column({ title, status, tasks, onDelete, onMove, onUpdate }) {
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: ItemTypes.TASK,
@@ -27,7 +27,7 @@ function Column({ title, status, tasks, onDelete, onMove }) {
                 padding: "10px",
                 width: "250px",
                 minHeight: "300px",
-                backgroundColor: isOver ? "#f0f8ff" : "#f9f9f9",
+                backgroundColor: isOver ? "#e6f7ff" : "#f9f9f9",
             }}
         >
             <h3>{title}</h3>
@@ -37,6 +37,7 @@ function Column({ title, status, tasks, onDelete, onMove }) {
                     key={task.id}
                     task={task}
                     onDelete={onDelete}
+                    onUpdate={onUpdate}
                 />
             ))}
         </div>
