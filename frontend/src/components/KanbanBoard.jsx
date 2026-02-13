@@ -20,9 +20,8 @@ function KanbanBoard() {
         status: "todo"
     });
 
-    // ---------------------------
     // SOCKET LISTENERS
-    // ---------------------------
+
     useEffect(() => {
         socket.on("sync:tasks", (serverTasks) => {
             setTasks(serverTasks);
@@ -62,9 +61,8 @@ function KanbanBoard() {
         };
     }, []);
 
-    // ---------------------------
     // HANDLERS
-    // ---------------------------
+
     const handleCreate = () => {
         createTask(formData);
 
@@ -146,9 +144,8 @@ function KanbanBoard() {
 }
 
 
-// ---------------------------
 // TEMP COLUMN COMPONENT
-// ---------------------------
+
 function Column({ title, tasks, onDelete }) {
     return (
         <div style={{
