@@ -1,4 +1,6 @@
 import { useState } from "react";
+import {useDraggable} from '@dnd-kit/core';
+import {CSS} from '@dnd-kit/utilities';
 
 function TaskCard({ task, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -10,13 +12,26 @@ function TaskCard({ task, onUpdate, onDelete }) {
     setIsEditing(false);
   };
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: task.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+  };
+
   const handleCancel = () => {
     setFormData(task);
     setIsEditing(false);
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 hover:shadow-md transition">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 hover:shadow-md transition ${isDragging? "opacity-50" : ""}`}>
 
       {isEditing ? (
         <div className="space-y-3">

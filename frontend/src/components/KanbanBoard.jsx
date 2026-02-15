@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {DndContext, closestCorners} from '@dnd-kit/core';
+
 import { socket } from "../socket";
 import Column from "./Column";
 import {
@@ -83,9 +85,21 @@ function KanbanBoard() {
         deleteTask(id);
     };
 
-    const handleMove = (id, newStatus) => {
-        moveTask(id, newStatus);
-    };
+    const handleDragEnd = (e) => {
+        const { active, over } = e;
+
+        if (!over) return;
+
+        const taskId = active.id;
+        const newStatus = over.id;
+
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task) return
+
+        if (task.status !== newStatus) {
+            moveTask(taskId, newStatus);
+        }
+    }
 
     const handleUpdate = (task) => {
         updateTask(task);
@@ -106,45 +120,48 @@ function KanbanBoard() {
     <div className="min-h-screen bg-gray-100 p-8">
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Kanban Board
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">
+            Kanban Board
+            </h1>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            <button
+            onClick={() => setShowModal(true)}
+            className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+            + Create Task
+            </button>
+        </div>
+        <DndContext
+            collisionDetection={closestCorners}
+            onDragEnd={handleDragEnd}
         >
-          + Create Task
-        </button>
-      </div>
+            <div className="flex gap-6">
+                <Column
+                    title="To Do"
+                    status="todo"
+                    tasks={getTasksByStatus("todo")}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                />
 
-      {/* Columns */}
-      <div className="flex gap-6">
-        <Column
-          title="To Do"
-          status="todo"
-          tasks={getTasksByStatus("todo")}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
+                <Column
+                    title="In Progress"
+                    status="inprogress"
+                    tasks={getTasksByStatus("inprogress")}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                />
 
-        <Column
-          title="In Progress"
-          status="inprogress"
-          tasks={getTasksByStatus("inprogress")}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
-
-        <Column
-          title="Done"
-          status="done"
-          tasks={getTasksByStatus("done")}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
-      </div>
+                <Column
+                    title="Done"
+                    status="done"
+                    tasks={getTasksByStatus("done")}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                />
+            </div>
+        </DndContext>
 
       {/* Create Modal */}
       {showModal && (

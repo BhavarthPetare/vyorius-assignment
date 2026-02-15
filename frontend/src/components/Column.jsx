@@ -1,8 +1,14 @@
 import TaskCard from "./TaskCard";
+import {useDroppable} from '@dnd-kit/core';
 
 function Column({ title, status, tasks, onUpdate, onDelete }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+  });
   return (
-    <div className="flex flex-col w-80 bg-gray-50 rounded-2xl border border-gray-200 p-5 shadow-sm">
+    <div
+      ref={setNodeRef}
+      className={`flex flex-col w-80 bg-gray-50 rounded-2xl border border-gray-200 p-5 shadow-sm transition ${isOver ? "border-blue-400 bg-blue-50" : "border-gray-200"}`}>
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold text-gray-800">
