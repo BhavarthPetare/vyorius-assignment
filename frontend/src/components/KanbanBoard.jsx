@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {DndContext, closestCorners} from '@dnd-kit/core';
+import {DndContext, closestCorners, DragOverlay, useSensor, useSensors, PointerSensor} from '@dnd-kit/core';
 
 import { socket } from "../socket";
 import Column from "./Column";
@@ -22,6 +22,15 @@ function KanbanBoard() {
         category: "Feature",
         status: "todo"
     });
+
+    const [activeState, setActiveState] = useState(null);
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: {
+          distance: 8,
+        },
+      })
+    );
 
     // SOCKET LISTENERS
 
@@ -85,10 +94,18 @@ function KanbanBoard() {
         deleteTask(id);
     };
 
+    const handleDragStart = (e) => {
+      const { active } = e;
+      const task = tasks.find((t) => t.id === active.id);
+      setActiveState(task);
+    };
     const handleDragEnd = (e) => {
         const { active, over } = e;
 
-        if (!over) return;
+        if (!over) {
+          setActiveState(null);
+          return
+        };
 
         const taskId = active.id;
         const newStatus = over.id;
@@ -99,6 +116,7 @@ function KanbanBoard() {
         if (task.status !== newStatus) {
             moveTask(taskId, newStatus);
         }
+        setActiveState(null);
     }
 
     const handleUpdate = (task) => {
@@ -133,7 +151,9 @@ function KanbanBoard() {
             </button>
         </div>
         <DndContext
+          sensors={sensors}
             collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
             <div className="flex gap-6">
@@ -161,6 +181,15 @@ function KanbanBoard() {
                     onDelete={handleDelete}
                 />
             </div>
+            <DragOverlay dropAnimation={null}>
+              {activeState ? (
+                <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-4 w-72 scale-105">
+                  <h4 className="font-semibold text-gray-800">
+                    {activeState.title}
+                  </h4>
+                </div>
+              ) : null}
+            </DragOverlay>
         </DndContext>
 
       {/* Create Modal */}

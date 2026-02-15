@@ -18,6 +18,7 @@ function TaskCard({ task, onUpdate, onDelete }) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
+    transition: "transform 200ms ease",
   };
 
   const handleCancel = () => {
@@ -29,9 +30,7 @@ function TaskCard({ task, onUpdate, onDelete }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
-      className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 hover:shadow-md transition ${isDragging? "opacity-50" : ""}`}>
+      className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 transition-all duration-200 ${isDragging? "opacity-0" : ""}`}>
 
       {isEditing ? (
         <div className="space-y-3">
@@ -73,10 +72,19 @@ function TaskCard({ task, onUpdate, onDelete }) {
         </div>
       ) : (
         <div className="space-y-3">
+          <div className="flex flex-row items-center justify-between">
+            <h4 className="text-lg font-semibold text-gray-800">
+              {task.title}
+            </h4>
 
-          <h4 className="text-lg font-semibold text-gray-800">
-            {task.title}
-          </h4>
+            <button
+              {...listeners}
+              {...attributes}
+              className="cursor-grab text-2xl text-gray-400 hover:text-gray-600"
+            >
+              ⠿
+            </button>
+          </div>
 
           <span
             className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
