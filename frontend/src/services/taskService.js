@@ -1,22 +1,29 @@
 import { socket } from "../socket";
 
-/**
- * CREATE TASK
- */
+// CREATE TASK
 export const createTask = (taskData) => {
+    if (!taskData?.title?.trim()) {
+        console.error("createTask: Title is required");
+        return;
+    }
+
     const task = {
         id: Date.now().toString(),
-        ...taskData,
+        title: taskData.title.trim(),
+        description: taskData.description || "",
+        priority: taskData.priority || "Low",
+        category: taskData.category || "Feature",
+        status: taskData.status || "todo",
+        attachments: taskData.attachments || [],
     };
 
     socket.emit("task:create", task);
 };
 
 
-/**
- * UPDATE TASK
- * Accepts full updated task object
- */
+
+// UPDATE TASK
+
 export const updateTask = (updatedTask) => {
     if (!updatedTask?.id) {
         console.error("updateTask: Task ID missing");

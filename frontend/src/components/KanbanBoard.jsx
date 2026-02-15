@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "../socket";
+import Column from "./Column";
 import {
     createTask,
     updateTask,
@@ -64,6 +65,7 @@ function KanbanBoard() {
     // HANDLERS
 
     const handleCreate = () => {
+        if (!formData.title.trim()) return;
         createTask(formData);
 
         setFormData({
@@ -92,90 +94,130 @@ function KanbanBoard() {
     const getTasksByStatus = (status) =>
         tasks.filter((t) => t.status === status);
 
-    if (loading) return <p>Loading board...</p>;
-
-    return (
-        <div style={{ padding: "20px" }}>
-
-            <button onClick={() => setShowModal(true)}>
-                + Create Task
-            </button>
-
-            {showModal && (
-                <div style={{ marginTop: "20px" }}>
-                    <input
-                        placeholder="Title"
-                        value={formData.title}
-                        onChange={(e) =>
-                            setFormData({ ...formData, title: e.target.value })
-                        }
-                    />
-                    <button onClick={handleCreate}>
-                        Save
-                    </button>
-                </div>
-            )}
-
-            <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
-                <Column
-                    title="To Do"
-                    tasks={getTasksByStatus("todo")}
-                    onDelete={handleDelete}
-                    onMove={handleMove}
-                    onUpdate={handleUpdate}
-                />
-                <Column
-                    title="In Progress"
-                    tasks={getTasksByStatus("inprogress")}
-                    onDelete={handleDelete}
-                    onMove={handleMove}
-                    onUpdate={handleUpdate}
-                />
-                <Column
-                    title="Done"
-                    tasks={getTasksByStatus("done")}
-                    onDelete={handleDelete}
-                    onMove={handleMove}
-                    onUpdate={handleUpdate}
-                />
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen text-gray-500">
+                Loading board...
             </div>
-        </div>
-    );
-}
+        );
+    };
 
-
-// TEMP COLUMN COMPONENT
-
-function Column({ title, tasks, onDelete }) {
     return (
-        <div style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            width: "250px"
-        }}>
-            <h3>{title}</h3>
+    <div className="min-h-screen bg-gray-100 p-8">
 
-            {tasks.map((task) => (
-                <div
-                    key={task.id}
-                    style={{
-                        border: "1px solid #999",
-                        padding: "8px",
-                        marginBottom: "8px"
-                    }}
-                >
-                    <strong>{task.title}</strong>
-                    <br />
-                    <button
-                        onClick={() => onDelete(task.id)}
-                        style={{ marginTop: "5px" }}
-                    >
-                        Delete
-                    </button>
-                </div>
-            ))}
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Kanban Board
+        </h1>
+
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          + Create Task
+        </button>
+      </div>
+
+      {/* Columns */}
+      <div className="flex gap-6">
+        <Column
+          title="To Do"
+          status="todo"
+          tasks={getTasksByStatus("todo")}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+
+        <Column
+          title="In Progress"
+          status="inprogress"
+          tasks={getTasksByStatus("inprogress")}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+
+        <Column
+          title="Done"
+          status="done"
+          tasks={getTasksByStatus("done")}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+      </div>
+
+      {/* Create Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-6 w-96 shadow-lg space-y-4">
+
+            <h2 className="text-xl font-semibold text-gray-800">
+              Create New Task
+            </h2>
+
+            <input
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              placeholder="Task Title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+            />
+
+            <textarea
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              placeholder="Description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+
+            <select
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              value={formData.priority}
+              onChange={(e) =>
+                setFormData({ ...formData, priority: e.target.value })
+              }
+            >
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+
+            <select
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+            >
+              <option value="todo">To Do</option>
+              <option value="inprogress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+
+            <div className="flex justify-end gap-3 pt-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                Create
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      )}
+
+    </div>
+  );
 }
 
 export default KanbanBoard;

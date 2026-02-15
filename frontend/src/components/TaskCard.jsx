@@ -1,73 +1,99 @@
 import { useState } from "react";
-import { useDrag } from "react-dnd";
 
-const ItemTypes = {
-    TASK: "task",
-};
+function TaskCard({ task, onUpdate, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(task);
 
-function TaskCard({ task, onDelete, onUpdate }) {
+  const handleSave = () => {
+    if (!formData.title.trim()) return;
+    onUpdate(formData);
+    setIsEditing(false);
+  };
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [editData, setEditData] = useState(task);
+  const handleCancel = () => {
+    setFormData(task);
+    setIsEditing(false);
+  };
 
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type: ItemTypes.TASK,
-        item: { id: task.id, status: task.status },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    }));
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 hover:shadow-md transition">
 
-    const handleSave = () => {
-        onUpdate(editData);
-        setIsEditing(false);
-    };
+      {isEditing ? (
+        <div className="space-y-3">
 
-    return (
-        <div
-            ref={drag}
-            style={{
-                border: "1px solid #999",
-                padding: "10px",
-                marginBottom: "10px",
-                backgroundColor: "white",
-                opacity: isDragging ? 0.5 : 1,
-                cursor: "move",
-            }}
-        >
-            {isEditing ? (
-                <>
-                    <input
-                        value={editData.title}
-                        onChange={(e) =>
-                            setEditData({ ...editData, title: e.target.value })
-                        }
-                    />
-                    <select
-                        value={editData.priority}
-                        onChange={(e) =>
-                            setEditData({ ...editData, priority: e.target.value })
-                        }
-                    >
-                        <option>Low</option>
-                        <option>Medium</option>
-                        <option>High</option>
-                    </select>
+          <input
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={formData.title}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+          />
 
-                    <button onClick={handleSave}>Save</button>
-                </>
-            ) : (
-                <>
-                    <strong>{task.title}</strong>
-                    <br />
-                    <small>{task.priority}</small>
-                    <br />
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
-                    <button onClick={() => onDelete(task.id)}>Delete</button>
-                </>
-            )}
+          <select
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={formData.priority}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value })
+            }
+          >
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleCancel}
+              className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
-    );
+      ) : (
+        <div className="space-y-3">
+
+          <h4 className="text-lg font-semibold text-gray-800">
+            {task.title}
+          </h4>
+
+          <span
+            className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+              task.priority === "High"
+                ? "bg-red-100 text-red-600"
+                : task.priority === "Medium"
+                ? "bg-yellow-100 text-yellow-600"
+                : "bg-green-100 text-green-600"
+            }`}
+          >
+            {task.priority}
+          </span>
+
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-3 py-1 text-sm bg-indigo-100 text-indigo-600 rounded-md hover:bg-indigo-200 transition"
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() => onDelete(task.id)}
+              className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded-md hover:bg-red-200 transition"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default TaskCard;
