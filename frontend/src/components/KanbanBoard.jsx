@@ -3,6 +3,7 @@ import {DndContext, closestCorners, DragOverlay, useSensor, useSensors, PointerS
 
 import { socket } from "../socket";
 import Column from "./Column";
+import ProgressChart from "./ProgressChart";
 import {
     createTask,
     updateTask,
@@ -63,6 +64,9 @@ function KanbanBoard() {
                 prev.filter((t) => t.id !== id)
             );
         });
+
+        // Request tasks after listeners are set up to avoid race condition
+        socket.emit("request:tasks");
 
         return () => {
             socket.off("sync:tasks");
@@ -150,6 +154,7 @@ function KanbanBoard() {
             + Create Task
             </button>
         </div>
+        <ProgressChart tasks={tasks}/>
         <DndContext
           sensors={sensors}
             collisionDetection={closestCorners}

@@ -12,8 +12,10 @@ let tasks = [];
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  // TODO: Implement WebSocket events for task management
-  socket.emit("sync:tasks", tasks);
+  // Respond to explicit task request instead of auto-emitting
+  socket.on("request:tasks", () => {
+    socket.emit("sync:tasks", tasks);
+  });
 
   socket.on("task:create", (task) => {
     tasks.push(task);
