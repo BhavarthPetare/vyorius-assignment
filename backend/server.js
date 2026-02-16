@@ -1,12 +1,33 @@
 const express = require("express");
 const http = require("http");
+const fs = require("fs");
+const path = require("path");
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
+const DATA_FILE = path.join(__dirname, "tasks.json");
 let tasks = [];
+
+if (fs.existsSync(DATA_FILE)) {
+  try {
+    const data = fs.readFileSync(DATA_FILE, "utf-8");
+    tasks = JSON.parse(data);
+  } catch (err) {
+    console.error("Error reading tasks.json:", err);
+    tasks = [];
+  }
+}
+
+function saveTasks() {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
+  } catch (error) {
+    console.error("Error saving tasks:", err);
+  }
+}
 
 
 io.on("connection", (socket) => {
@@ -19,11 +40,13 @@ io.on("connection", (socket) => {
 
   socket.on("task:create", (task) => {
     tasks.push(task);
+    saveTasks();
     io.emit("task:created", task);
   });
 
   socket.on("task:update", (updated) => {
     tasks = tasks.map(t => t.id === updated.id ? updated:t);
+    saveTasks();
     io.emit("task:updated", updated);
   });
 
@@ -36,6 +59,7 @@ io.on("connection", (socket) => {
 
   socket.on("task:delete", (id) => {
     tasks = tasks.filter(t => t.id !== id);
+    saveTasks();
     io.emit("task:deleted", id);
   });
 
