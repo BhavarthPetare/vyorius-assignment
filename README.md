@@ -177,17 +177,14 @@ npx playwright test --ui
 # 🌐 Deployment
 
 Backend deployed to:
-
 <https://vyorius-assignment.onrender.com>
 
 
 Frontend deployed to:
-
 <https://vyorius-assignment.vercel.app/>
 
 
 Environment variable required in frontend:
-
 VITE_SOCKET_URL=<https://vyorius-assignment.onrender.com>
 
 # 🧠 Design Decisions
