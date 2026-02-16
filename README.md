@@ -129,7 +129,7 @@ A `tasks.example.json` file is provided for setup.
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/BhavarthPetare/vyorius-assignment>
 cd websocket-kanban-vitest-playwright
 ```
 
@@ -154,25 +154,25 @@ npm run dev
 Frontend runs on:
 http://localhost:3000/
 
-### 🧪 Running Tests
-# Unit & Integration Tests
+# 🧪 Running Tests
+### Unit & Integration Tests
 ```bash
 cd frontend
 npx vitest
 ```
 
-# End-to-End Tests (Playwright)
+### End-to-End Tests (Playwright)
 ```bash
 cd frontend
 npx playwright test
 ```
 
-Interactive mode:
+### Interactive mode:
 ```bash
 npx playwright test --ui
 ```
 
-### 🌐 Deployment
+# 🌐 Deployment
 
 Backend deployed to:
 
@@ -188,7 +188,7 @@ Environment variable required in frontend:
 
 VITE_SOCKET_URL=<https://vyorius-assignment.onrender.com>
 
-### 🧠 Design Decisions
+# 🧠 Design Decisions
 
 Used local JSON persistence instead of MongoDB to ensure persistence without introducing database complexity.
 
@@ -200,7 +200,7 @@ Structured tests into unit, integration, and e2e for clarity and maintainability
 
 Used role-based selectors in Playwright for stable end-to-end testing.
 
-### 🚀 Future Improvements
+# 🚀 Future Improvements
 
 MongoDB persistence layer
 
@@ -212,5 +212,5 @@ Task filtering & search
 
 CI/CD integration
 
-### 👤 Author
-# Bhavarth Petare
+# 👤 Author
+## Bhavarth Petare
