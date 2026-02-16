@@ -41,25 +41,57 @@ The system uses WebSockets to synchronize updates instantly across all connected
 
 ## 📂 Project Structure
 
-websocket-kanban-vitest-playwright/
-│
-├── backend/
-│ ├── server.js
-│ ├── tasks.example.json
-│ └── package.json
-│
-├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ ├── services/
-│ │ ├── tests/
-│ │ │ ├── unit/
-│ │ │ ├── integration/
-│ │ │ └── e2e/
-│ └── package.json
-│
-├── .gitignore
-└── README.md
+### Root Directory
+
+- **backend/** – Node.js + Socket.IO server
+- **frontend/** – React (Vite) application
+- **.gitignore**
+- **README.md**
+
+---
+
+### Backend Structure
+
+- **server.js**  
+  Express server setup and WebSocket event handling logic.
+
+- **tasks.example.json**  
+  Template JSON file for initializing local task persistence.
+
+- **tasks.json** *(ignored in Git)*  
+  Runtime persistence file storing tasks locally.
+
+- **package.json**  
+  Backend dependencies and scripts.
+
+---
+
+### Frontend Structure
+
+- **src/** – Main application source code
+
+  #### Components
+  - **KanbanBoard.jsx** – Main board layout and state management.
+  - **Column.jsx** – Individual Kanban column component.
+  - **TaskCard.jsx** – Task card UI and interaction logic.
+  - **ProgressChart.jsx** – Real-time task progress visualization.
+
+  #### Services
+  - **socket.js** – Socket.IO client configuration.
+  - **taskService.js** – Abstraction layer for emitting WebSocket events.
+
+  #### Tests
+  - **unit/** – Unit tests (Vitest)
+  - **integration/** – WebSocket & component integration tests
+  - **e2e/** – End-to-end tests (Playwright)
+
+  #### Entry Files
+  - **App.jsx** – Application root component
+  - **main.jsx** – React entry point (Vite)
+
+- **package.json**  
+  Frontend dependencies and scripts.
+
 
 ---
 
