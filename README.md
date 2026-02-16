@@ -41,59 +41,29 @@ The system uses WebSockets to synchronize updates instantly across all connected
 
 ## 📂 Project Structure
 
-### Root Directory
+```
 
-- **backend/** – Node.js + Socket.IO server
-- **frontend/** – React (Vite) application
-- **.gitignore**
-- **README.md**
+websocket-kanban-vitest-playwright/
+│
+├── backend/
+│ ├── server.js
+│ ├── tasks.example.json
+│ └── package.json
+│
+├── frontend/
+│ ├── src/
+│ │ ├── components/
+│ │ ├── services/
+│ │ ├── tests/
+│ │ │ ├── unit/
+│ │ │ ├── integration/
+│ │ │ └── e2e/
+│ └── package.json
+│
+├── .gitignore
+└── README.md
 
----
-
-### Backend Structure
-
-- **server.js**  
-  Express server setup and WebSocket event handling logic.
-
-- **tasks.example.json**  
-  Template JSON file for initializing local task persistence.
-
-- **tasks.json** *(ignored in Git)*  
-  Runtime persistence file storing tasks locally.
-
-- **package.json**  
-  Backend dependencies and scripts.
-
----
-
-### Frontend Structure
-
-- **src/** – Main application source code
-
-  #### Components
-  - **KanbanBoard.jsx** – Main board layout and state management.
-  - **Column.jsx** – Individual Kanban column component.
-  - **TaskCard.jsx** – Task card UI and interaction logic.
-  - **ProgressChart.jsx** – Real-time task progress visualization.
-
-  #### Services
-  - **socket.js** – Socket.IO client configuration.
-  - **taskService.js** – Abstraction layer for emitting WebSocket events.
-
-  #### Tests
-  - **unit/** – Unit tests (Vitest)
-  - **integration/** – WebSocket & component integration tests
-  - **e2e/** – End-to-end tests (Playwright)
-
-  #### Entry Files
-  - **App.jsx** – Application root component
-  - **main.jsx** – React entry point (Vite)
-
-- **package.json**  
-  Frontend dependencies and scripts.
-
-
----
+```
 
 ## ✅ Implemented Features
 
@@ -222,27 +192,27 @@ VITE_SOCKET_URL=<https://vyorius-assignment.onrender.com>
 
 # 🧠 Design Decisions
 
-Used local JSON persistence instead of MongoDB to ensure persistence without introducing database complexity.
+- Used local JSON persistence instead of MongoDB to ensure persistence without introducing database complexity.
 
-Implemented real-time state synchronization via Socket.IO.
+- Implemented real-time state synchronization via Socket.IO.
 
-Used dnd-kit for modern, performant drag-and-drop behavior.
+- Used dnd-kit for modern, performant drag-and-drop behavior.
 
-Structured tests into unit, integration, and e2e for clarity and maintainability.
+- Structured tests into unit, integration, and e2e for clarity and maintainability.
 
-Used role-based selectors in Playwright for stable end-to-end testing.
+- Used role-based selectors in Playwright for stable end-to-end testing.
 
 # 🚀 Future Improvements
 
-MongoDB persistence layer
+- MongoDB persistence layer
 
-Authentication system
+- Authentication system
 
-Within-column task ordering
+- Within-column task ordering
 
-Task filtering & search
+- Task filtering & search
 
-CI/CD integration
+- CI/CD integration
 
 # 👤 Author
 ## Bhavarth Petare
