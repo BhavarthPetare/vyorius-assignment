@@ -43,7 +43,7 @@ The system uses WebSockets to synchronize updates instantly across all connected
 
 ```
 
-websocket-kanban-vitest-playwright/
+vyorius-assignment/
 │
 ├── backend/
 │ ├── server.js
@@ -53,11 +53,20 @@ websocket-kanban-vitest-playwright/
 ├── frontend/
 │ ├── src/
 │ │ ├── components/
+| | | ├── Column.jsx
+| | | ├── KanbanBoard.jsx
+| | | ├── ProgressChart.jsx
+| | | ├── TaskCard.jsx
 │ │ ├── services/
+| | | ├── taskService.js
 │ │ ├── tests/
 │ │ │ ├── unit/
+| | | | ├── KanbanBoard.test.jsx
+| | | | ├── TaskCard.test.jsx
 │ │ │ ├── integration/
+| | | | ├── WebSocketIntegration.test.jsx
 │ │ │ └── e2e/
+| | | | ├── KanbanBoard.e2e.test.js
 │ └── package.json
 │
 ├── .gitignore
