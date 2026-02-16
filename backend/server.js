@@ -54,6 +54,7 @@ io.on("connection", (socket) => {
     tasks = tasks.map(t => 
       t.id === id ? {...t, status} : t
     );
+    saveTasks();
     io.emit("task:moved", {id, status});
   });
 
